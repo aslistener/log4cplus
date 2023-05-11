@@ -146,6 +146,25 @@ instantiate_thread_pool ()
 #endif
 
 
+//! Helper structure for holding progschj::ThreadPool pointer.
+//! It is necessary to have this so that we can correctly order
+//! destructors between Hierarchy and the progschj::ThreadPool.
+//! Hierarchy wants to wait for outstading logging to finish
+//! therefore the ThreadPool can only be destroyed after that.
+struct ThreadPoolHolder
+{
+    std::atomic<progschj::ThreadPool*> thread_pool{};
+
+    ThreadPoolHolder () = default;
+    ThreadPoolHolder (ThreadPoolHolder const&) = delete;
+    ~ThreadPoolHolder ()
+    {
+        auto const tp = thread_pool.exchange(nullptr, std::memory_order_release);
+        delete tp;
+    }
+};
+
+
 //! Default context.
 struct DefaultContext
 {
@@ -160,10 +179,34 @@ struct DefaultContext
     spi::LayoutFactoryRegistry layout_factory_registry;
     spi::FilterFactoryRegistry filter_factory_registry;
     spi::LocaleFactoryRegistry locale_factory_registry;
-#if ! defined (LOG4CPLUS_SINGLE_THREADED)
-    std::unique_ptr<progschj::ThreadPool> thread_pool {instantiate_thread_pool ()};
-#endif
     Hierarchy hierarchy;
+    ThreadPoolHolder thread_pool;
+
+#if ! defined (LOG4CPLUS_SINGLE_THREADED)
+    progschj::ThreadPool *
+    get_thread_pool (bool init)
+    {
+        if (init) {
+            std::call_once (thread_pool_once, [&] {
+                thread_pool.thread_pool.store (instantiate_thread_pool ().release (), std::memory_order_release);
+            });
+        }
+        // cppreference.com says: The specification of release-consume ordering
+        // is being revised, and the use of memory_order_consume is temporarily
+        // discouraged. Thus, let's use memory_order_acquire.
+        return thread_pool.thread_pool.load (std::memory_order_acquire);
+    }
+
+    void
+    shutdown_thread_pool ()
+    {
+        auto const tp = thread_pool.thread_pool.exchange(nullptr, std::memory_order_release);
+        delete tp;
+    }
+
+private:
+    std::once_flag thread_pool_once;
+#endif
 };
 
 
@@ -315,7 +358,7 @@ void
 enqueueAsyncDoAppend (SharedAppenderPtr const & appender,
     spi::InternalLoggingEvent const & event)
 {
-    get_dc ()->thread_pool->enqueue (
+    get_dc ()->get_thread_pool (true)->enqueue (
         [=] ()
         {
             appender->asyncDoAppend (event);
@@ -329,9 +372,9 @@ shutdownThreadPool ()
 {
 #if ! defined (LOG4CPLUS_SINGLE_THREADED)
     DefaultContext * const dc = get_dc (false);
-    if (dc && dc->thread_pool)
+    if (dc)
     {
-        dc->thread_pool.reset ();
+        dc->shutdown_thread_pool ();
     }
 #endif
 }
@@ -342,10 +385,11 @@ waitUntilEmptyThreadPoolQueue ()
 {
 #if ! defined (LOG4CPLUS_SINGLE_THREADED)
     DefaultContext * const dc = get_dc (false);
-    if (dc && dc->thread_pool)
+    progschj::ThreadPool * tp;
+    if (dc && (tp = dc->get_thread_pool (false)))
     {
-        dc->thread_pool->wait_until_empty ();
-        dc->thread_pool->wait_until_nothing_in_flight ();
+        tp->wait_until_empty ();
+        tp->wait_until_nothing_in_flight ();
     }
 #endif
 }
@@ -549,8 +593,8 @@ initialize ()
 void
 deinitialize ()
 {
-    shutdownThreadPool();
     Logger::shutdown ();
+    shutdownThreadPool();
 }
 
 
@@ -565,7 +609,7 @@ threadCleanup ()
     //
     // This function can be called from TLS initializer/terminator by loader
     // when log4cplus is compiled and linked to as a static library. In case of
-    // other threads temination, it should do its job and free per-thread
+    // other threads termination, it should do its job and free per-thread
     // data. However, when the whole process is being terminated, it is called
     // after the CRT has been uninitialized and the CRT heap is not available
     // any more. In such case, instead of crashing, we just give up and leak
@@ -597,7 +641,7 @@ void
 setThreadPoolSize (std::size_t LOG4CPLUS_THREADED (pool_size))
 {
 #if ! defined (LOG4CPLUS_SINGLE_THREADED)
-    std::unique_ptr<progschj::ThreadPool> & thread_pool = get_dc ()->thread_pool;
+    auto const thread_pool = get_dc ()->get_thread_pool (true);
     if (thread_pool)
         thread_pool->set_pool_size (pool_size);
 

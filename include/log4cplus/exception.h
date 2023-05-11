@@ -1,5 +1,4 @@
-// -*- C++ -*-
-//  Copyright (C) 2009-2017, Vaclav Haisman. All rights reserved.
+//  Copyright (C) 2023, Vaclav Haisman. All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modifica-
 //  tion, are permitted provided that the following conditions are met:
@@ -22,8 +21,8 @@
 //  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
 //  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef LOG4CPLUS_THREAD_SYNCPRIMS_IMPL_H
-#define LOG4CPLUS_THREAD_SYNCPRIMS_IMPL_H
+#ifndef LOG4CPLUS_EXCEPTION_HXX
+#define LOG4CPLUS_EXCEPTION_HXX
 
 #include <log4cplus/config.hxx>
 
@@ -31,59 +30,27 @@
 #pragma once
 #endif
 
-#if ! defined (INSIDE_LOG4CPLUS)
-#  error "This header must not be be used outside log4cplus' implementation files."
-#endif
-
+#include <log4cplus/tstring.h>
 #include <stdexcept>
-#include <log4cplus/thread/syncprims.h>
-#include <mutex>
-#include <thread>
-#include <condition_variable>
 
 
-namespace log4cplus { namespace thread { namespace impl {
+namespace log4cplus
+{
 
-
-LOG4CPLUS_EXPORT void syncprims_throw_exception [[noreturn]] (
-    char const * const msg, char const * const file, int line);
-
-
-class SharedMutex
-    : public SharedMutexImplBase
+/**
+ * \brief Exception class thrown by LogLog.
+ * \sa helpers::LogLog
+ *
+ */
+class LOG4CPLUS_EXPORT exception : public std::runtime_error
 {
 public:
-    SharedMutex ();
-    ~SharedMutex ();
-
-    void rdlock () const;
-    void wrlock () const;
-    void rdunlock () const;
-    void wrunlock () const;
-
-private:
-    Mutex m1;
-    Mutex m2;
-    Mutex m3;
-    Semaphore w;
-    mutable unsigned writer_count;
-    Semaphore r;
-    mutable unsigned reader_count;
-
-    SharedMutex (SharedMutex const &);
-    SharedMutex & operator = (SharedMutex const &);
+    exception (tstring const &);
+    exception (exception const &);
+    exception & operator=(exception const &);
+    virtual ~exception ();
 };
 
+} // namespace log4cplus
 
-} } } // namespace log4cplus { namespace thread { namespace impl {
-
-
-// Include the appropriate implementations of the classes declared
-// above.
-
-#include <log4cplus/thread/impl/syncprims-cxx11.h>
-
-#undef LOG4CPLUS_THROW_RTE
-
-
-#endif // LOG4CPLUS_THREAD_SYNCPRIMS_IMPL_H
+#endif // LOG4CPLUS_EXCEPTION_HXX

@@ -90,6 +90,7 @@ namespace log4cplus
 #if defined (LOG4CPLUS_HAVE_CODECVT_UTF32_FACET) && defined (UNICODE)
             , fUTF32              = (3 << fEncodingShift)
 #endif
+            , fThrow              = (1 << 5)
         };
 
         // ctor and dtor
@@ -257,9 +258,6 @@ namespace log4cplus
          * # logger, A2 in this case.
          * log4cplus.logger.class.of.the.day=INHERIT
          * </pre>
-         *
-         * Refer to the <b>setOption</b> method in each Appender and
-         * Layout for class specific options.
          *
          * Use the <code>#</code> character at the beginning of a line
          * for comments.

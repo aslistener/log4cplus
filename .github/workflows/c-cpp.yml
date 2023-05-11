@@ -1,0 +1,31 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest']
+
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: configure
+      run: |
+        ./scripts/fix-timestamps.sh
+        mkdir objdir
+        cd objdir
+        ../configure --enable-shared --enable-unit-tests --with-working-locale
+    - name: make
+      run: cd objdir ; make
+    - name: make check
+      run: cd objdir ; make check

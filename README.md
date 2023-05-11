@@ -3,22 +3,22 @@
 Short Description
 =================
 
-[log4cplus] is a simple to use C++17 logging API providing thread--safe,
+[log4cplus] is a simple to use C++20 logging API providing thread--safe,
 flexible, and arbitrarily granular control over log management and
 configuration.  It is modeled after the Java log4j API.
 
-[log4cplus]: https://sourceforge.net/projects/log4cplus/
+[log4cplus]: https://github.com/log4cplus/log4cplus
 
 
 Latest Project Information
 ==========================
 
-The latest up-to-date information for this project can be found at
-[log4cplus] SourceForge project pages or [log4cplus wiki][4] on
-SourceForge.  Please submit bugs, patches, feature requests, etc.,
-there, or on [GitHub][13].
+The latest up-to-date information for this project can be found
+on [GitHub][13] project page or [log4cplus wiki][4] there.
+Please submit bugs, patches, feature requests, etc.,
+on [GitHub][13].
 
-[4]: https://sourceforge.net/p/log4cplus/wiki/Home/
+[4]: https://github.com/log4cplus/log4cplus/wiki
 [13]: https://github.com/log4cplus/log4cplus
 
 
@@ -36,7 +36,7 @@ from log4net, log4cxx, log4cpp).
 Platform support
 ================
 
-[log4cplus] version 3.0 and beyond require C++17. [log4cplus] has been
+[log4cplus] version 3.0 and beyond require C++20. [log4cplus] has been
 ported to and tested on the following platforms:
 
   - Linux/AMD64 with GCC version 8.3.0 (Ubuntu 8.3.0-6ubuntu1)
@@ -59,7 +59,7 @@ on Linux platform offered by [Travis CI][11] service.
 The oldest Windows version that is supported by 2.x releases is Windows Vista.
 
 The following platforms were supported by the 1.x series of [log4cplus]. They
-either do not have a reasonable C++17 capable compiler or have not been checked
+either do not have a reasonable C++20 capable compiler or have not been checked
 with [log4cplus] 3.x, yet:
 
   - Minix 3.3.0/i386 with Clang version 3.4 (branches/release_34) with
@@ -349,7 +349,7 @@ To allow using the best available method, [log4cplus] enables the
 method (2) by checking `_WIN32_WINNT >= 0x0600` condition, when
 compiling [log4cplus] targeted to Windows Vista or later.
 
-[tlsvista]: http://support.microsoft.com/kb/118816/en-us
+[tlsvista]: https://learn.microsoft.com/en-us/cpp/parallel/thread-local-storage-tls?view=msvc-170
 
 
 Linking on Windows
@@ -398,7 +398,7 @@ variants that support threading using the `CXX` variable on
 
     $ ../configure --enable-threads CXX=xlC_r
 
-[1]: http://www.ibm.com/support/knowledgecenter/en/SSGH3R_12.1.0/com.ibm.xlcpp121.aix.doc/compiler_ref/tucmpinv.html
+[1]: https://www.ibm.com/docs/en/xl-c-and-cpp-aix/13.1.0?topic=applications-invoking-compiler
 
 
 AIX reentrancy problem
@@ -418,7 +418,7 @@ derived from `std::streambuf` class.  [log4cplus] itself uses
 `std::ostringstream`.  This resulted into an attempt to recursively
 lock the global non recursive lock and a deadlock.
 
-[2]: http://sourceforge.net/p/log4cplus/bugs/103/
+[2]: https://sourceforge.net/p/log4cplus/bugs/103/
 
 
 Solaris / SunOS
@@ -428,7 +428,7 @@ Some older version of this operating system might have problems
 linking [log4cplus] due to [missing `__tls_get_addr`][3] in their
 unpatched state.
 
-[3]: https://groups.google.com/d/msg/comp.unix.solaris/AAMqkK0QZ6U/zlkVKA1L_QcJ
+[3]: https://groups.google.com/g/comp.unix.solaris/c/AAMqkK0QZ6U/m/zlkVKA1L_QcJ
 
 
 Solaris Studio
@@ -458,7 +458,7 @@ The autotools and our `configure.ac` combo does not handle Solaris
 Studio compiler on Linux well enough and needs a little help with
 configuration of POSIX threads:
 
-~~~~{.bash}
+```sh
 $ COMMON_FLAGS="-L/lib/x86_64-linux-gnu/ \
 -L/usr/lib/x86_64-linux-gnu/ -mt=yes -O"
 
@@ -468,7 +468,7 @@ CXX=/opt/solarisstudio12.3/bin/CC \
 CFLAGS="$COMMON_FLAGS" \
 CXXFLAGS="$COMMON_FLAGS" \
 LDFLAGS="-lpthread"
-~~~~
+```
 
 
 HP-UX with `aCC`
@@ -497,7 +497,7 @@ line:
     $ ../configure --disable-symbols-visibility-options \
     --enable-threads=yes CXXFLAGS="-AA"
 
-[9]: http://h30499.www3.hp.com/t5/Languages-and-Scripting/Building-Log4cplus-fails-with-quot-ld-Unsatisfied-symbol-virtual/td-p/6261411#.UoHtgPmet8G
+[9]: https://community.hpe.com/t5/languages-and-scripting/building-log4cplus-fails-with-quot-ld-unsatisfied-symbol-virtual/m-p/6262849#.Y_5ho4DMImM
 
 
 Haiku
@@ -512,7 +512,7 @@ avoid linking errors like this:
 
 Running the command switches the _current_ GCC version to version 4.
 This change is permanent and global. See also Haiku ticket
-[#8368](http://dev.haiku-os.org/ticket/8368).
+[#8368](https://dev.haiku-os.org/ticket/8368).
 
 
 Qt4 / Win32 / MSVC
@@ -635,7 +635,7 @@ Unsupported compilers and platforms
 
 [log4cplus] does not support too old or broken C++ compilers. Since [log4cplus]
 version 3.0.0, it means it does not support any platform or compiler without
-decent C++17 support.
+decent C++20 support.
 
   - Visual Studio prior to 2015
   - GCC prior to 4.8
@@ -679,34 +679,24 @@ License
 =======
 
 This library is licensed under the Apache Public License 2.0 and two
-clause BSD license.  Please read the included LICENSE file for
+clause BSD license.  Please read the included [LICENSE](./LICENSE) file for
 details.
 
 
 Contributions
 =============
 
-[log4cplus] (bug tracker, files, wiki) is hosted on SourceForge,
-except for [log4cplus source][5], which is hosted on GitHub. This
-allows the project to integrate with [Travis CI][11] service offered
-by GitHub.
-
-[5]: https://sourceforge.net/p/log4cplus/source-code-link/
-[11]: https://sourceforge.net/p/log4cplus/travis-ci/
+[log4cplus] (bug tracker, files, wiki) is hosted on GitHub.
+See also [Contributions](https://github.com/log4cplus/log4cplus/wiki/Development#contributions)
+topic on wiki.
 
 
 Patches
 -------
 
-Anybody can contribute to log4cplus development. If you are
-contributing a source code change, use a reasonable form: a merge
-request of a Git branch or a patch file attached to a ticket in
-[Bugs tracker][6] or sent to [log4cplus-devel mailing list][7]. Unless
-it is obvious, always state what branch or release tarball is your
-patch based upon.
-
-[6]: https://sourceforge.net/p/log4cplus/bugs/
-[7]: mailto:log4cplus-devel@lists.sourceforge.net
+Anybody can contribute to log4cplus development.
+If you are contributing a source code change, use a reasonable
+form: a merge request of a Git branch.
 
 
 Formatting
@@ -716,7 +706,7 @@ Please use common sense. Follow the style of surrounding code. You can
 use the following Emacs style that is based on Microsoft's style as a
 guide line:
 
-~~~~{.commonlisp}
+```lisp
 ;; Custom MS like indentation style.
 (c-add-style "microsoft"
              '("stroustrup"
@@ -726,7 +716,7 @@ guide line:
                 (inher-cont . c-lineup-multi-inher)
                 (arglist-cont-nonempty . +)
                 (template-args-cont . +))))
-~~~~
+```
 
 
 Tools
@@ -764,4 +754,4 @@ the correct order.
 and its master branch files are always generated using the latest available
 version of the tools.
 
-[12]: http://www.gnu.org/software/autogen/
+[12]: https://www.gnu.org/software/autogen/

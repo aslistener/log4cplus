@@ -9,6 +9,7 @@ set (log4cplus_sources
   consoleappender.cxx
   cygwin-win32.cxx
   env.cxx
+  exception.cxx
   factory.cxx
   fileappender.cxx
   fileinfo.cxx
@@ -190,6 +191,7 @@ install(FILES ../include/log4cplus/appender.h
               ../include/log4cplus/config.hxx
               ../include/log4cplus/configurator.h
               ../include/log4cplus/consoleappender.h
+              ../include/log4cplus/exception.h
               ../include/log4cplus/fileappender.h
               ../include/log4cplus/fstreams.h
               ../include/log4cplus/hierarchy.h
@@ -231,6 +233,7 @@ install(FILES ../include/log4cplus/helpers/appenderattachableimpl.h
               ../include/log4cplus/helpers/snprintf.h
               ../include/log4cplus/helpers/socket.h
               ../include/log4cplus/helpers/socketbuffer.h
+              ../include/log4cplus/helpers/source_location.h
               ../include/log4cplus/helpers/stringhelper.h
               ../include/log4cplus/helpers/thread-config.h
               ../include/log4cplus/helpers/timehelper.h
@@ -268,3 +271,8 @@ install(FILES ../include/log4cplus/config/macosx.h
               ../include/log4cplus/config/windowsh-inc.h
               ${log4cplus_BINARY_DIR}/include/log4cplus/config/defines.hxx
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/log4cplus/config )
+
+install(FILES ../README.md
+              ../LICENSE
+              ../ChangeLog
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/log4cplus)

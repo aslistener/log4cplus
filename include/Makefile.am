@@ -16,6 +16,7 @@ nobase_log4cplusinc_HEADERS = \
 	log4cplus/config/windowsh-inc.h \
 	log4cplus/configurator.h \
 	log4cplus/consoleappender.h \
+	log4cplus/exception.h \
 	log4cplus/fileappender.h \
 	log4cplus/fstreams.h \
 	log4cplus/helpers/appenderattachableimpl.h \
@@ -29,6 +30,7 @@ nobase_log4cplusinc_HEADERS = \
 	log4cplus/helpers/snprintf.h \
 	log4cplus/helpers/socket.h \
 	log4cplus/helpers/socketbuffer.h \
+	log4cplus/helpers/source_location.h \
 	log4cplus/helpers/stringhelper.h \
 	log4cplus/helpers/thread-config.h \
 	log4cplus/helpers/timehelper.h \

@@ -144,6 +144,7 @@ AS_VAR_SET([BUILD_WITH_WCHAR_T_SUPPORT], [$with_wchar_t_support])
 AC_SUBST([BUILD_WITH_WCHAR_T_SUPPORT])
 
 dnl Enable tests
+
 LOG4CPLUS_ARG_ENABLE([tests],
   [Enable tests [default=yes]],
   [enable_tests=yes])
@@ -174,7 +175,7 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
 
-AX_CXX_COMPILE_STDCXX_17
+AX_CXX_COMPILE_STDCXX([20],[],[mandatory])
 
 AS_VAR_APPEND([CPPFLAGS], [" -D_GNU_SOURCE=1"])
 
